@@ -10,12 +10,15 @@
  * takes in any number of command line arguments
  * if any are given, it adds them to a linked list
  * provides a menu which lets you do the following:
- * print list, add node front, delete node, and quit (deletes list, frees memory, and exits)
+ * print list, insert node, delete node, and quit (deletes list, frees memory, and exits)
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define MAX_BUFFER 30
+
 
 typedef struct Node {
 	char* string;
@@ -23,10 +26,10 @@ typedef struct Node {
 }node;
 
 node *newNode() {
-	node *t = (node*)malloc(sizeof(node));
-	t->string = "";
-	t->next = NULL;
-	return t;
+	node *new = (node*)malloc(sizeof(node));
+	new->string = "";
+	new->next = NULL;
+	return new;
 }
 
 void printList(node *head) {
@@ -72,7 +75,6 @@ void initList(node** head, char* argv[], int argc) {
 
 void printMenu() {
 	printf("1. Print list\n");
-	/*printf("2. Delete list\n");*/
 	printf("2. Add node\n");
 	printf("3. Delete node\n");
 	printf("4. Quit\n");
@@ -81,7 +83,7 @@ void printMenu() {
 
 int getMenuVal() {
 	int val = 0;
-	char buffer[20];
+	char buffer[MAX_BUFFER];
 	while (1) {
 		fgets(buffer, sizeof(buffer), stdin);
 		sscanf(buffer, "%d", &val);
@@ -96,6 +98,73 @@ int getMenuVal() {
 	return val;
 }
 
+int linkLen(node* head) {
+	int count = 0;
+	node* current = head;
+	while (current != NULL) {
+		count++;
+		current = current->next;
+	}
+	return count;
+}
+
+
+
+char* getStringVal() {
+	char* string = "";
+	char buffer[MAX_BUFFER];
+	while (1) {
+		fgets(buffer, sizeof(buffer), stdin);
+		sscanf(buffer, "%s", string);
+
+		if (string[0] == '\0')
+			printf("Please put something in \n");
+		else
+			break;
+	}
+	return string;
+}
+
+void insertNode(node** head, int position, char* string) {
+	node *current = *head;
+	node *new = newNode();
+
+
+}
+
+int checkNodePosition(node* head) {
+	int position;
+	int len = linkLen(head);
+	char buffer[MAX_BUFFER];
+	while (1) {
+		fgets(buffer, sizeof(buffer), stdin);
+		sscanf(buffer, "%d", &position);
+
+		if (position < 0) { printf("Please enter a position number of 0 or less than %d\n", len);}
+		
+		else if (position >= len) { position = len-1; break;}
+		else
+			break;
+	}
+	return position;
+}
+
+
+void case2(node* head) {
+	char* string = "";
+	int position = 0;
+
+	printf("What would like to put into the list: ");
+	string = getStringVal();
+
+	printf("Where in the list (first node is at 0) would you like to put it: \n");
+	position = checkNodePosition(head);
+
+	insertNode(&head, position, string);
+
+
+}
+
 void menu(node* head) {
 	int mv = 0;
 	while(1) {
@@ -105,6 +174,9 @@ void menu(node* head) {
 		switch (mv) {
 			case 1:
 				printList(head);
+				break;
+			case 2:
+				case2(head);
 				break;
 			case 4:
 				deleteList(head);
