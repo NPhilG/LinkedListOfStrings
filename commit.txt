@@ -1,2 +1,2 @@
-[main 435fdd6] Fixed insertNode() and case 2, printf functions for debugging are not yet removed
- 2 files changed, 37 insertions(+), 9 deletions(-)
+[main 546bb70] Fixed errors with insertNode(), printf functions //, 1 leak when using insertNode()
+ 2 files changed, 9 insertions(+), 8 deletions(-)
