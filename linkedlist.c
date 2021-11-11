@@ -120,12 +120,15 @@ void insertNode(node** head, int position, char* str) {
 	if (position == 0) {
 		new->next = current;
 		new->string = string;
+		
 		printf("new->string = %s\n", new->string);
 		*head = new;
 		printf("head->string = %s\n", (*head)->string);
 
-		printList(new);
-		printList((*head));
+		//printList(new);
+		//printList((*head));
+		//free(string);
+		return;
 	}
 
 	else {
@@ -143,7 +146,7 @@ void insertNode(node** head, int position, char* str) {
 	new->next = prev->next;
 	prev->next = new;
 	}
-	printList((*head));
+	//printList((*head));
 }
 
 void deleteNode(node **head, int position) {
@@ -208,7 +211,6 @@ int main(int argc, char *argv[]) {
 				string[strcspn(string, "\n")] = 0;
 				string[strcspn(string, " ")] = 0;
 				fflush(stdin);
-				printf("string = %s\n", string);
 
 				while (1) {
 					memset(buffer, 0, MAX_BUFFER);
@@ -225,9 +227,8 @@ int main(int argc, char *argv[]) {
 						break;
 				}
 
-				printf("position = %d\n", position);
 				insertNode(&head, position, string);
-				printList(head);
+				//printList(head);
 				break;
 			case 4:
 				deleteList(head);
