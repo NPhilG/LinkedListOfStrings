@@ -36,7 +36,7 @@ void printList(node *head) {
 	
 	if (head == NULL) {
 		printf("List is empty\n");
-		exit(1);
+		return;
 	}
 
 	while (head != NULL) {
@@ -108,24 +108,34 @@ int linkLen(node* head) {
 	return count;
 }
 
-void insertNode(node** head, int position, char* string) {
+void insertNode(node** head, int position, char* str) {
 	node *current = *head;
 	node *new = newNode();
+	char *string = malloc(strlen(str)+1);
+	strcpy(string, str);
 
+	printf("string = %s\n", string);
+	printf("head->string = %s\n", (*head)->string);
 	int i = 0;
 	if (position == 0) {
 		new->next = current;
 		new->string = string;
+		printf("new->string = %s\n", new->string);
 		*head = new;
-		return;
+		printf("head->string = %s\n", (*head)->string);
+
+		printList(new);
+		printList((*head));
 	}
 
 	else {
+	printf("current->string = %s\n", current->string);
 	current = (*head)->next;
 	node *prev = *head;
 	
 	while (i < position-1) {
 		prev = current;
+		printf("current->string = %s\n", current->string);
 		current = current->next;
 		i++;
 	}
@@ -133,6 +143,23 @@ void insertNode(node** head, int position, char* string) {
 	new->next = prev->next;
 	prev->next = new;
 	}
+	printList((*head));
+}
+
+void deleteNode(node **head, int position) {
+	node *prev = NULL;
+	node *current = *head;
+	node *temp = newNode();
+	int len = linkLen((*head));
+	int i = 0;
+
+	while (i < position -1) {
+		prev = current;	
+		current = current->next;
+		i++;
+	}
+	temp = prev->next;
+	prev->next = temp;
 }
 
 int main(int argc, char *argv[]) {
@@ -166,7 +193,7 @@ int main(int argc, char *argv[]) {
 		mv = getMenuVal();
 
 		char *string;
-		string = malloc(256);
+		string = (char*)malloc(256);
 		int len = linkLen(head);
 		memset(buffer, 0, MAX_BUFFER);
 		
@@ -176,13 +203,15 @@ int main(int argc, char *argv[]) {
 				break;
 			case 2:
 				printf("What would like to put: ");
-				fgets(string, sizeof(string), stdin);
+				fgets(string, 256, stdin);
 
 				string[strcspn(string, "\n")] = 0;
 				string[strcspn(string, " ")] = 0;
 				fflush(stdin);
+				printf("string = %s\n", string);
 
 				while (1) {
+					memset(buffer, 0, MAX_BUFFER);
 					printf("Where in the list (head is at 0) will you put it: ");
 					fgets(buffer, sizeof(buffer), stdin);
 					sscanf(buffer, " %d", &position);
@@ -198,6 +227,7 @@ int main(int argc, char *argv[]) {
 
 				printf("position = %d\n", position);
 				insertNode(&head, position, string);
+				printList(head);
 				break;
 			case 4:
 				deleteList(head);
