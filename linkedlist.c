@@ -33,7 +33,7 @@ node *newNode() {
 }
 
 void printList(node *head) {
-	//head = head->next;
+	
 	if (head == NULL) {
 		printf("List is empty\n");
 		exit(1);
@@ -108,127 +108,32 @@ int linkLen(node* head) {
 	return count;
 }
 
-
-/*
-char[] getStringVal() {
-	printf("inside getStringVal()\n");
-	char *string = "";
-	char buffer[30];
-	while (1) {
-		printf("inside while loop\n");
-		fgets(buffer, sizeof(buffer), stdin);
-//		sscanf(buffer, "%s", string);
-//		scanf("%s", string);
-		//memcopy(		
-		break;
-	}
-	printf("end of getStringVal()\n");
-	return buffer;
-}
-*/
 void insertNode(node** head, int position, char* string) {
 	node *current = *head;
 	node *new = newNode();
 
-	printf("head->string = %s\n", (*head)->string);
-	printf("new->string = %s\n", new->string);
-
+	int i = 0;
 	if (position == 0) {
 		new->next = current;
 		new->string = string;
 		*head = new;
+		return;
 	}
-	printf("head->string = %s\n", (*head)->string);
 
-	printList((*head));
-	//printList(current);
-	//printList(new);
-
-	//return (*head);
+	else {
+	current = (*head)->next;
+	node *prev = *head;
 	
-}
-
-
-/*int checkNodePosition(node *head) {
-	int position;
-	int len = linkLen(head);
-	char buffer[MAX_BUFFER];
-//	printf("inside checkNodePosition()\n");
-
-	while (1) {
-		fgets(buffer, sizeof(buffer), stdin);
-		sscanf(buffer, "%d", &position);
-	
-
-		if (position < 0) { printf("Please enter a position number >= 0 and <= 4 %d\n", len+1);}
-		
-		else if (position >= len) { position = len; break;}
-		else
-			break;
+	while (i < position-1) {
+		prev = current;
+		current = current->next;
+		i++;
 	}
-	printf("position = %d\n", position);
-	return position;
-}
-*/
-
-node* case2(node* head) {
-	char *string;
-	string = malloc(256);
-	int position = -1;
-	char buffer[MAX_BUFFER];
-
-	printf("What would like to put into the list: ");
-	scanf("%255s", string);
-	fflush(stdin);
-	printf("string = %s\n", string);
-
-
-	printf("Where in the list (first node is at 0) would you like to put it: \n");
-	//position = checkNodePosition(head);
-	while (1) {
-	
-		fgets(buffer, sizeof(buffer), stdin);
-		sscanf(buffer, "%d", &position);
-
-		if (position > linkLen(head)) {
-			position = linkLen(head);
-			break;
-		}
-		else if (position >= 0)
-			break;
+	new->string = string;
+	new->next = prev->next;
+	prev->next = new;
 	}
-
-	printf("position = %d\n", position);
-
-	insertNode(&head, position, string);
-	free(string);
-	return head;
-
 }
-
-node*  menu(node* head) {
-	int mv = 0;
-	int i = 1;
-	while(i) {
-		printMenu();
-		mv = getMenuVal();
-
-		switch (mv) {
-			case 1:
-				printList(head);
-				break;
-			case 2:
-				head = case2(head);
-				break;
-			case 4:
-				deleteList(head);
-				exit(1);
-				break;
-		}
-	}
-	return head;
-}
-
 
 int main(int argc, char *argv[]) {
 
@@ -249,8 +154,6 @@ int main(int argc, char *argv[]) {
 	}
 
 	initList(&head, argv, argc);
-
-	//head = menu(head);
 	
 	int mv = -1;
 	int i = 1;
@@ -265,25 +168,24 @@ int main(int argc, char *argv[]) {
 		char *string;
 		string = malloc(256);
 		int len = linkLen(head);
+		memset(buffer, 0, MAX_BUFFER);
 		
 		switch (mv) {
 			case 1:
 				printList(head);
 				break;
 			case 2:
-				//int position = -1;
-				//char buffer[MAX_BUFFER];
-
-				
 				printf("What would like to put: ");
-				scanf("%256s", string);
+				fgets(string, sizeof(string), stdin);
+
+				string[strcspn(string, "\n")] = 0;
+				string[strcspn(string, " ")] = 0;
 				fflush(stdin);
 
 				while (1) {
 					printf("Where in the list (head is at 0) will you put it: ");
-					printf("\n");
 					fgets(buffer, sizeof(buffer), stdin);
-					sscanf(buffer, "%d", &position);
+					sscanf(buffer, " %d", &position);
 
 					if (position > len) {
 						position = len;
@@ -296,20 +198,15 @@ int main(int argc, char *argv[]) {
 
 				printf("position = %d\n", position);
 				insertNode(&head, position, string);
-
 				break;
 			case 4:
 				deleteList(head);
+				free(string);
 				exit(1);
 			default:
 				break;
 		}
+		free(string);
 	}
-
-
-
-	//printList(head);
-	//deleteList(head);
-
 	return 0;
 }
