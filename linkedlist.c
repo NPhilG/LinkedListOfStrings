@@ -28,8 +28,8 @@ typedef struct Node {
 node *newNode() {
 	printf("inside newNode() \n");
 	node *new = (node*)malloc(sizeof(node));
-	new->string = "";
 //	new->string = (char*)malloc(256);
+	new->string = "";
 	new->next = NULL;
 	return new;
 }
@@ -52,7 +52,13 @@ void printList(node *head) {
 	}
 
 	while (head != NULL) {
-		printf(" %s ", head->string);
+		if (head->string == NULL) {
+			printf("node->string == NULL\n");
+			break;
+			
+		}
+		if (head->string != NULL) 
+			printf(" %s ", head->string);
 		head = head->next;
 	}
 	printf("\n");
@@ -67,9 +73,10 @@ void deleteList(node *head) {
 	while (head != NULL) {
 		prev = head;
 		head = head->next;
-		//free(prev->string);
+		free(prev->string);
 		free(prev);
 	}
+	free(head);
 }
 
 void initList(node** head, char* argv[], int argc) {
@@ -78,7 +85,10 @@ void initList(node** head, char* argv[], int argc) {
 	printf("inside initList function\n");
 
 	for (int i = 1; i < argc; i++) {
-		t->string = argv[i];
+		//t->string = argv[i];
+		
+		t->string = (char*)malloc(sizeof(argv[i])+1);
+		strncpy(t->string, argv[i], strlen(argv[i]+1));
 		if (i < argc-1) {
 			t->next = newNode();
 			t = t->next;
@@ -126,47 +136,44 @@ void insertNode(node** head, int position, char* str) {
 	node *current = *head;
 	node *new = newNode();
 	char *string = (char*)malloc(strlen(str)+1);
-	strcpy(string, str);
+	strncpy(string, str, strlen(str)+1);
 
 	printf("string = %s\n", string);
-	printf("head->string = %s\n", (*head)->string);
 	int i = 0;
 	if (position == 0) {
 		new->next = current;
-		new->string = string;
-		//strncpy(new->string, str, sizeof(str));
+		//new->string = string;
+		new->string = (char*)malloc(strlen(str)+1);
+		strncpy(new->string, str, strlen(str)+1);
 		
-		printf("new->string = %s\n", new->string);
 		*head = new;
-		printf("head->string = %s\n", (*head)->string);
-
-		//free(string);
+		free(string);
 		return;
 	}
 
 	else {
-	printf("current->string = %s\n", current->string);
 	current = (*head)->next;
 	node *prev = *head;
 	
 	while (i < position-1) {
 		prev = current;
-		printf("current->string = %s\n", current->string);
 		current = current->next;
 		i++;
 	}
-	new->string = string;
+	new->string = (char*)malloc(strlen(str)+1);
+	strncpy(new->string, str, strlen(str)+1);
 	new->next = prev->next;
 	prev->next = new;
 	}
 	//printList((*head));
+	free(string);
 }
 
 void deleteNode(node **head, int position) {
 	node *prev = NULL;
 	node *current = *head;
 	node *temp = newNode();
-	int len = linkLen((*head));
+//	int len = linkLen((*head));
 	int i = 0;
 
 	while (i < position -1) {
@@ -189,6 +196,7 @@ int main(int argc, char *argv[]) {
 
 	node *head = NULL;
 	head = (node*)malloc(sizeof(node));
+	head->string = "";
 	head->next = NULL;
 
 	if (!head) {
@@ -210,11 +218,12 @@ int main(int argc, char *argv[]) {
 
 		char *string;
 		string = (char*)malloc(256);
-		int len = linkLen(head);
 		memset(buffer, 0, MAX_BUFFER);
+		int len = linkLen(head);
 		
 		switch (mv) {
 			case 1:
+				printf("before entering printList(head)\n");
 				printList(head);
 				break;
 			case 2:
