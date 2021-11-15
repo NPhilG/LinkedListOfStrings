@@ -26,9 +26,7 @@ typedef struct Node {
 }node;
 
 node *newNode() {
-	//printf("inside newNode() \n");
 	node *new = (node*)malloc(sizeof(node));
-//	new->string = (char*)malloc(256);
 	new->string = "";
 	new->next = NULL;
 	return new;
@@ -66,7 +64,6 @@ void printList(node *head) {
 
 void deleteList(node *head) {
 
-//	printf("Deleting list\n");
 	node *prev;
 	prev = NULL;
 
@@ -85,8 +82,7 @@ void initList(node** head, char* argv[], int argc) {
 	printf("inside initList function\n");
 
 	for (int i = 1; i < argc; i++) {
-		//t->string = argv[i];
-		
+
 		t->string = (char*)malloc(sizeof(argv[i])+1);
 		strncpy(t->string, argv[i], strlen(argv[i]));
 		if (i < argc-1) {
@@ -102,7 +98,6 @@ void printMenu() {
 	printf("3. Delete node\n");
 	printf("4. More details\n");
 	printf("5. Quit\n");
-
 }
 
 int getMenuVal() {
@@ -142,7 +137,7 @@ void insertNode(node** head, int position, char* str) {
 	int i = 0;
 	if (position == 0) {
 		new->next = current;
-		//new->string = string;
+		
 		new->string = (char*)malloc(strlen(str)+1);
 		strncpy(new->string, str, strlen(str)+1);
 		
@@ -165,14 +160,13 @@ void insertNode(node** head, int position, char* str) {
 	new->next = prev->next;
 	prev->next = new;
 	}
-	//printList((*head));
 	free(string);
 }
 
 void deleteNode(node **head, int position) {
 	node *prev = NULL;
 	node *current = *head;
-	node *temp = newNode();
+
 	int len = linkLen((*head));
 	int i = 0;
 
@@ -182,41 +176,51 @@ void deleteNode(node **head, int position) {
 	}
 
 	else if(position == 0) {
+		printf("deleting the first element\n");
 		(*head) = (*head)->next;
-		//printList(current);
-		//printList((*head));
+
 		free(current->string);
 		free(current);
-		free(temp);
 		return;
 	}
 
 	else if (position >= len-1) {
-		// delete the last item
+		printf("deleting the last element\n");
 		position = len-1;
-		for (i = 0; i < len-1; i++) {
+		prev = current;
+
+		for (i = 0; i < len-2; i++) {
 			prev = current;
 			current = current->next;
 		}
+		prev = current->next;
 		current->next = NULL;
-		printList(current);
-		printList((*head));
-		printList(prev);
+		free(prev->string);
+		free(prev);
 		return;
 	}
 
-	while (i < position-1) {
+	else { 
+		for (i = 0; i < position-1; i++) {
 		prev = current;	
 		current = current->next;
-		i++;
+		}
+		if(current->next->next) {
+			prev = current->next;
+			current->next = current->next->next;
+		}
+		else {
+			prev = current->next;
+			current->next = NULL;
+		}
+		free(prev->string);
+		free(prev);
+		
 	}
-	//temp = prev->next;
-	prev->next = temp;
 }
 
 int main(int argc, char *argv[]) {
 
-	
 	printf("the number of elements: %d\n", argc-1);
 	for (int i = 1; i < argc; i++) {
 		printf("%s ", argv[i]);
@@ -279,7 +283,6 @@ int main(int argc, char *argv[]) {
 				}
 
 				insertNode(&head, position, string);
-				//printList(head);
 				break;
 			case 3:
 				while (1) {
