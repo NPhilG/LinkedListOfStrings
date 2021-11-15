@@ -26,7 +26,7 @@ typedef struct Node {
 }node;
 
 node *newNode() {
-	printf("inside newNode() \n");
+	//printf("inside newNode() \n");
 	node *new = (node*)malloc(sizeof(node));
 //	new->string = (char*)malloc(256);
 	new->string = "";
@@ -88,7 +88,7 @@ void initList(node** head, char* argv[], int argc) {
 		//t->string = argv[i];
 		
 		t->string = (char*)malloc(sizeof(argv[i])+1);
-		strncpy(t->string, argv[i], strlen(argv[i]+1));
+		strncpy(t->string, argv[i], strlen(argv[i]));
 		if (i < argc-1) {
 			t->next = newNode();
 			t = t->next;
@@ -112,7 +112,7 @@ int getMenuVal() {
 		fgets(buffer, sizeof(buffer), stdin);
 		sscanf(buffer, "%d", &val);
 
-		if (val >= 1 && val <= 5)
+		if (val >= 1 && val <= 6)
 			break;
 		else {
 			printf("Please pick a number from 1 to 4\n");
@@ -173,15 +173,44 @@ void deleteNode(node **head, int position) {
 	node *prev = NULL;
 	node *current = *head;
 	node *temp = newNode();
-//	int len = linkLen((*head));
+	int len = linkLen((*head));
 	int i = 0;
 
-	while (i < position -1) {
+	if (len == 0) {
+		printf("List is empty, you can't delete anything\n");
+		return;
+	}
+
+	else if(position == 0) {
+		(*head) = (*head)->next;
+		//printList(current);
+		//printList((*head));
+		free(current->string);
+		free(current);
+		free(temp);
+		return;
+	}
+
+	else if (position >= len-1) {
+		// delete the last item
+		position = len-1;
+		for (i = 0; i < len-1; i++) {
+			prev = current;
+			current = current->next;
+		}
+		current->next = NULL;
+		printList(current);
+		printList((*head));
+		printList(prev);
+		return;
+	}
+
+	while (i < position-1) {
 		prev = current;	
 		current = current->next;
 		i++;
 	}
-	temp = prev->next;
+	//temp = prev->next;
 	prev->next = temp;
 }
 
@@ -223,7 +252,7 @@ int main(int argc, char *argv[]) {
 		
 		switch (mv) {
 			case 1:
-				printf("before entering printList(head)\n");
+				//printf("before entering printList(head)\n");
 				printList(head);
 				break;
 			case 2:
@@ -255,9 +284,23 @@ int main(int argc, char *argv[]) {
 			case 3:
 				while (1) {
 					memset(buffer, 0, MAX_BUFFER);
-					printf("What item would like to delete, from 0 to %d: ", len-1);
-					fgets(buffer, sizeof(buffer), stdin);
-					sscanf(buffer, " %d", &position);
+
+					if (len == 0) {
+						//printf("List is empty, nothing can be deleted\n");
+						break;
+					}
+
+					if (len == 1) {
+						printf("There is only one item to be deleted\n");
+						position = 0;
+						break;
+					}
+
+					if (len > 1) {
+						printf("What item would like to delete, from 0 to %d: ", len-1);
+						fgets(buffer, sizeof(buffer), stdin);
+						sscanf(buffer, " %d", &position);
+					}
 
 					if (position > len) {
 						position = len-1;
@@ -267,7 +310,7 @@ int main(int argc, char *argv[]) {
 					else if (position >= 0)
 						break;
 				}
-				//deleteNode(&head, position);
+				deleteNode(&head, position);
 				break;
 			case 5:
 				deleteList(head);
@@ -275,6 +318,10 @@ int main(int argc, char *argv[]) {
 				exit(1);
 			case 4:
 				printDetails(len);
+				break;
+			case 6:
+				len = linkLen(head);
+				printf("len = %d\n", len);
 				break;
 		}
 		free(string);
