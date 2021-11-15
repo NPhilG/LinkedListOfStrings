@@ -26,10 +26,22 @@ typedef struct Node {
 }node;
 
 node *newNode() {
+	printf("inside newNode() \n");
 	node *new = (node*)malloc(sizeof(node));
 	new->string = "";
+//	new->string = (char*)malloc(256);
 	new->next = NULL;
 	return new;
+}
+
+void printDetails(int len) {
+	printf("The linked list has a number of objects put into it\n");
+	printf("The elements are number from 0 to %d\n", len);
+	printf("Option 1 prints all the items in the linked list\n");
+	printf("Option 2 adds items to a node that is put into the linked list\n");
+	printf("If the number given to the item placement is higher than the number of items in the linked list\n");
+	printf("then it will simply add the node to the end\n");
+	printf("Option 3 deletes items to the linked list\n");
 }
 
 void printList(node *head) {
@@ -48,13 +60,14 @@ void printList(node *head) {
 
 void deleteList(node *head) {
 
-	printf("Deleting list\n");
+//	printf("Deleting list\n");
 	node *prev;
 	prev = NULL;
 
 	while (head != NULL) {
 		prev = head;
 		head = head->next;
+		//free(prev->string);
 		free(prev);
 	}
 }
@@ -77,7 +90,8 @@ void printMenu() {
 	printf("1. Print list\n");
 	printf("2. Add node\n");
 	printf("3. Delete node\n");
-	printf("4. Quit\n");
+	printf("4. More details\n");
+	printf("5. Quit\n");
 
 }
 
@@ -88,7 +102,7 @@ int getMenuVal() {
 		fgets(buffer, sizeof(buffer), stdin);
 		sscanf(buffer, "%d", &val);
 
-		if (val == 1 || val == 4 || val == 2)
+		if (val >= 1 && val <= 5)
 			break;
 		else {
 			printf("Please pick a number from 1 to 4\n");
@@ -111,7 +125,7 @@ int linkLen(node* head) {
 void insertNode(node** head, int position, char* str) {
 	node *current = *head;
 	node *new = newNode();
-	char *string = malloc(strlen(str)+1);
+	char *string = (char*)malloc(strlen(str)+1);
 	strcpy(string, str);
 
 	printf("string = %s\n", string);
@@ -120,13 +134,12 @@ void insertNode(node** head, int position, char* str) {
 	if (position == 0) {
 		new->next = current;
 		new->string = string;
+		//strncpy(new->string, str, sizeof(str));
 		
 		printf("new->string = %s\n", new->string);
 		*head = new;
 		printf("head->string = %s\n", (*head)->string);
 
-		//printList(new);
-		//printList((*head));
 		//free(string);
 		return;
 	}
@@ -230,11 +243,29 @@ int main(int argc, char *argv[]) {
 				insertNode(&head, position, string);
 				//printList(head);
 				break;
-			case 4:
+			case 3:
+				while (1) {
+					memset(buffer, 0, MAX_BUFFER);
+					printf("What item would like to delete, from 0 to %d: ", len-1);
+					fgets(buffer, sizeof(buffer), stdin);
+					sscanf(buffer, " %d", &position);
+
+					if (position > len) {
+						position = len-1;
+						break;
+					}
+
+					else if (position >= 0)
+						break;
+				}
+				//deleteNode(&head, position);
+				break;
+			case 5:
 				deleteList(head);
 				free(string);
 				exit(1);
-			default:
+			case 4:
+				printDetails(len);
 				break;
 		}
 		free(string);
